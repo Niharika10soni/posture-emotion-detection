@@ -33,27 +33,28 @@ A lightweight, real-time posture and emotion recognition system powered by **PyT
     ├── main.py
     ├── logs
     │   └── realtime_log_shufflenet.csv
-    ├── shufflenet_class_info.pth
-    ├── shufflenet_dual_output_model.pt
-    ├── shufflenet_training_log.csv
+    │   └── realtime_log_shufflenet.csv
+    ├── models
+    │     └── shufflenet_class_info.pth
+    │     └── shufflenet_dual_output_model.pt
+    ├── assets
 
 Scripts Overview
 
 - train.py: Model training and validation using a dual-headed classifier.
 
-- main.py: Real-time webcam inference with overlays.
+- main.py: Real-time webcam inference and batch inference.
 
 - pipeline.py: Core video frame classification logic.
 
 - frame-capturing.py: Utility script to capture labeled frames.
 
-- batch-inference.py: Apply the trained model to video/image datasets offline.
 
 ## 💻 System Setup
 
 - Python Version: 3.8.3
 - Libraries Used:
-All required libraries and dependencies are listed in requirements.txt.
+All required libraries and dependencies are listed in [`requirements.txt`](requirements.txt).
 - To ensure isolation and avoid dependency conflicts, it's recommended to use a Python virtual environment. Follow the steps below to set it up:
     1. Create a virtual environment:
 
@@ -67,9 +68,6 @@ All required libraries and dependencies are listed in requirements.txt.
 
     Once the environment is set up and dependencies are installed, you're ready to run the training and inference scripts.
 
-- To run the real-time demo, first clone the repository to your local system. Then, execute the following command from the project directory:
-
-    ```python python main.py --mode infer```
 
 ## 🧠 Model Choice & Pipeline
 
@@ -85,7 +83,7 @@ OpenCV – for real-time webcam frame capture and display.
 
 PIL, matplotlib, psutil, csv – for preprocessing, visualization, and performance logging.
 
-The training script (train.py) handles data loading, augmentation, training, validation, and saving of the model and class mappings. The inference script (inference.py) is optimized for real-time webcam inference with overlay and logging support.
+The training script (train.py) handles data loading, augmentation, training, validation, and saving of the model and class mappings. The inference script (pipeline.py) is optimized for real-time webcam inference with overlay and logging support.
 
 ✅ Why ShuffleNetV2?
 
@@ -99,7 +97,43 @@ Familiarity: Well-supported in PyTorch with a flexible API for modifications.
 
 Dual-Task Capability: Easy to extend with dual output heads for simultaneous classification of posture and emotion.
 
-🚀 Future Improvements [Accuracy]
+## ⏳ Training
+
+Run the Training Script
+Once the dataset is set up, execute the training script by running:
+
+```python train.py```
+
+The model will be trained for the specified number of epochs. During training, the script will log the training and validation losses to shufflenet_training_log.csv, and it will save the trained model and class mappings in shufflenet_dual_output_model.pt and shufflenet_class_info.pth, respectively.
+
+📈 Training Performance
+
+![Training Graph](assets/training_graph.png)
+
+## 🔍 Inference Guide
+Once your model is trained and saved, you can test it either in real-time using a webcam or on a batch of saved images.
+
+🟢 1. Real-Time Webcam Inference
+To launch the webcam-based posture and emotion detection pipeline:
+
+```python main.py --mode infer```
+
+🔹 This will:
+
+Open your webcam.
+
+Perform posture and emotion classification on each frame.
+
+Display predictions as an overlay on the video feed.
+
+Log CPU usage, memory usage, FPS, and prediction results in logs/realtime_log_shufflenet.csv.
+
+📦 2. Batch Inference on a Dataset
+To evaluate the trained model on a folder of images (without webcam):
+
+```python main.py --mode batch --dataset mini_dataset```
+
+## 🚀 Future Improvements [Accuracy]
 
 Potential ways to raise accuracy
 
